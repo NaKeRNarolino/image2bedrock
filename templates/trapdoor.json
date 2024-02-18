@@ -130,7 +130,7 @@
       "minecraft:geometry": "geometry.trapdoor",
       "minecraft:material_instances": {
         "*": {
-          "texture": "spruce_trapdoor",
+          "texture": "{{texture}}",
           "render_method": "alpha_test"
         }
       },

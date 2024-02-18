@@ -24,6 +24,7 @@ struct TrapdoorTemplate<'a> {
     pub pack_id: &'a str,
     pub block_id: &'a str,
     pub display_name: &'a str,
+    pub texture: &'a str,
 }
 
 fn uppercase_words(data: &str) -> String {
@@ -513,6 +514,14 @@ fn workflow(id: String, name: String, path: PathBuf) {
                                 .to_str()
                                 .unwrap()
                                 .to_lowercase(),
+                            texture: file
+                                .path()
+                                .file_stem()
+                                .unwrap()
+                                .to_str()
+                                .unwrap()
+                                .to_lowercase()
+                                .as_str(),
                         }
                         .render()
                         .unwrap(),
