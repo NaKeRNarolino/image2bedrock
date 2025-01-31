@@ -1,0 +1,38 @@
+{
+  "format_version": "1.20.80",
+  "minecraft:block": {
+    "description": {
+      "identifier": "{{ pack_id }}:{{ block_id }}",
+      "states": {
+        "{{ pack_id }}:north_visible": [false, true],
+        "{{ pack_id }}:south_visible": [false, true],
+        "{{ pack_id }}:east_visible": [false, true],
+        "{{ pack_id }}:west_visible": [false, true]
+      },
+      "menu_category": {
+        "category": "construction"
+      }
+    },
+    "components": {
+      "minecraft:collision_box": true,
+      "minecraft:display_name": "{{ display_name }}",
+      "minecraft:geometry": {
+        "identifier": "geometry.custom_glass_pane",
+        "bone_visibility": {
+          "north": "q.block_state('{{ pack_id }}:north_visible') == true",
+          "south": "q.block_state('{{ pack_id }}:south_visible') == true",
+          "west": "q.block_state('{{ pack_id }}:west_visible') == true",
+          "east": "q.block_state('{{ pack_id }}:east_visible') == true"
+        }
+      },
+      "minecraft:material_instances": {
+        "*": {
+          "render_method": "blend",
+          "texture": "{{ texture }}"
+        }
+      },
+      "minecraft:light_dampening": 0,
+      "minecraft:custom_components": ["chipped:glass_pane"]
+    }
+  }
+}

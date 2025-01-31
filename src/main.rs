@@ -11,6 +11,14 @@ struct BlockDefTemplate<'a> {
 }
 
 #[derive(Template)]
+#[template(path = "glass.json", escape = "none")]
+struct GlassTemplate<'a> {
+    pub pack_id: &'a str,
+    pub block_id: &'a str,
+    pub display_name: &'a str,
+}
+
+#[derive(Template)]
 #[template(path = "crop.json", escape = "none")]
 struct CropTemplate<'a> {
     pub pack_id: &'a str,
@@ -21,6 +29,24 @@ struct CropTemplate<'a> {
 #[derive(Template)]
 #[template(path = "trapdoor.json", escape = "none")]
 struct TrapdoorTemplate<'a> {
+    pub pack_id: &'a str,
+    pub block_id: &'a str,
+    pub display_name: &'a str,
+    pub texture: &'a str,
+}
+
+#[derive(Template)]
+#[template(path = "glass_pane.json", escape = "none")]
+struct GlassPaneTemplate<'a> {
+    pub pack_id: &'a str,
+    pub block_id: &'a str,
+    pub display_name: &'a str,
+    pub texture: &'a str,
+}
+
+#[derive(Template)]
+#[template(path = "slab.json", escape = "none")]
+struct SlabTemplate<'a> {
     pub pack_id: &'a str,
     pub block_id: &'a str,
     pub display_name: &'a str,
@@ -151,6 +177,56 @@ fn workflow(id: String, name: String, path: PathBuf) {
                         .contains("_leaves")
                 {
                     print!("{}", "Is Glass || Leaves > ".bright_yellow());
+                    if file
+                        .path()
+                        .file_stem()
+                        .unwrap()
+                        .to_str()
+                        .unwrap()
+                        .to_lowercase()
+                        .contains("_glass")
+                    {
+                        print!("{}", "Is Glass so Making a Pane > ".bright_yellow());
+                        match fs::write(
+                            format!(
+                                "./result/blocks/{}_pane.json",
+                                file.path()
+                                    .file_stem()
+                                    .unwrap()
+                                    .to_str()
+                                    .unwrap()
+                                    .to_lowercase()
+                            ),
+                            GlassPaneTemplate {
+                                display_name: &name,
+                                pack_id: &id,
+                                block_id: format!(
+                                    "{}_pane",
+                                    &file
+                                        .path()
+                                        .file_stem()
+                                        .unwrap()
+                                        .to_str()
+                                        .unwrap()
+                                        .to_lowercase()
+                                )
+                                .as_str(),
+                                texture: file
+                                    .path()
+                                    .file_stem()
+                                    .unwrap()
+                                    .to_str()
+                                    .unwrap()
+                                    .to_lowercase()
+                                    .as_str(),
+                            }
+                            .render()
+                            .unwrap(),
+                        ) {
+                            Ok(_) => (),
+                            Err(_) => (),
+                        }
+                    }
                     match fs::write(
                         format!(
                             "./result/blocks/{}.json",
@@ -161,54 +237,19 @@ fn workflow(id: String, name: String, path: PathBuf) {
                                 .unwrap()
                                 .to_lowercase()
                         ),
-                        format!(
-                            "{{
-                            \"format_version\": \"1.20.0\",
-                            \"minecraft:block\": {{
-                                \"description\": {{
-                                    \"identifier\": \"{}\",
-                                    \"menu_category\": {{
-                                        \"category\": \"construction\"
-                                    }}
-                                }},
-                                \"components\": {{
-                                    \"minecraft:destructible_by_mining\": {{
-                                        \"seconds_to_destroy\": 3
-                                    }},
-                                    \"minecraft:material_instances\": {{
-                                        \"*\": {{
-                                          \"render_method\": \"blend\"
-                                        }}
-                                    }},
-                                    \"minecraft:display_name\": \"{}\"
-                                }}
-                            }}
-                        }}",
-                            format!(
-                                "{}:{}",
-                                id,
-                                file.path()
-                                    .file_stem()
-                                    .unwrap()
-                                    .to_str()
-                                    .unwrap()
-                                    .to_lowercase()
-                            ),
-                            name
-                        ),
-                        // BlockDefTemplate {
-                        //     display_name: &name,
-                        //     pack_id: &id,
-                        //     block_id: &file
-                        //         .path()
-                        //         .file_stem()
-                        //         .unwrap()
-                        //         .to_str()
-                        //         .unwrap()
-                        //         .to_lowercase(),
-                        // }
-                        // .render()
-                        // .unwrap(),
+                        GlassTemplate {
+                            pack_id: &id,
+                            block_id: &file
+                                .path()
+                                .file_stem()
+                                .unwrap()
+                                .to_str()
+                                .unwrap()
+                                .to_lowercase(),
+                            display_name: &name,
+                        }
+                        .render()
+                        .unwrap(),
                     ) {
                         Ok(_) => "OK",
                         Err(_) => "ERR",
@@ -231,159 +272,29 @@ fn workflow(id: String, name: String, path: PathBuf) {
                                 .unwrap()
                                 .to_str()
                                 .unwrap()
+                                .to_lowercase(),
+                        ),
+                        SlabTemplate {
+                            pack_id: &id,
+                            block_id: &file
+                                .path()
+                                .file_stem()
+                                .unwrap()
+                                .to_str()
+                                .unwrap()
+                                .to_lowercase(),
+                            display_name: &name,
+                            texture: file
+                                .path()
+                                .file_stem()
+                                .unwrap()
+                                .to_str()
+                                .unwrap()
                                 .to_lowercase()
-                        ),
-                        format!(
-                            "{{
-                            \"format_version\": \"1.20.30\",
-                            \"minecraft:block\": {{
-                                \"description\": {{
-                                    \"identifier\": \"{}\",
-                                    \"menu_category\": {{
-                                        \"category\": \"construction\"
-                                    }},
-                                    \"traits\": {{
-                                        \"minecraft:placement_position\": {{
-                                          \"enabled_states\": [\"minecraft:vertical_half\"]
-                                        }}
-                                      }},
-                                      \"states\": {{
-                                        \"{}:double\": [false, true]
-                                      }}
-                                }},
-                                \"permutations\": [
-      // Bottom Slab
-      {{
-        \"condition\": \"q.block_state('minecraft:vertical_half') == 'bottom' && !q.block_state('{}:double')\",
-        \"components\": {{
-          \"minecraft:collision_box\": {{
-            \"origin\": [-8, 0, -8],
-            \"size\": [16, 8, 16]
-          }},
-          \"minecraft:selection_box\": {{
-            \"origin\": [-8, 0, -8],
-            \"size\": [16, 8, 16]
-          }},
-          \"minecraft:on_interact\": {{
-            \"event\": \"{}:form_double\",
-            \"condition\": \"q.block_face == 1.0 && q.is_item_name_any('slot.weapon.mainhand', '{}')\"
-          }}
-        }}
-      }},
-      // Top Slab
-      {{
-        \"condition\": \"q.block_state('minecraft:vertical_half') == 'top' && !q.block_state('{}:double')\",
-        \"components\": {{
-          \"minecraft:collision_box\": {{
-            \"origin\": [-8, 8, -8],
-            \"size\": [16, 8, 16]
-          }},
-          \"minecraft:selection_box\": {{
-            \"origin\": [-8, 8, -8],
-            \"size\": [16, 8, 16]
-          }},
-          \"minecraft:on_interact\": {{
-            \"event\": \"{}:form_double\",
-            \"condition\": \"q.block_face == 0.0 && q.is_item_name_any('slot.weapon.mainhand', '{}')\"
-          }}
-        }}
-      }},
-      // Double Slab
-    {{
-        \"condition\": \"q.block_state('{}:double')\",
-        \"components\": {{
-          \"minecraft:unit_cube\": {{}},
-          \"minecraft:on_player_destroyed\": {{
-            \"event\": \"{}:destroy_double\"
-          }}
-        }}
-      }}
-    ],
-    \"components\": {{
-      \"minecraft:destructible_by_mining\": {{
-        \"seconds_to_destroy\": 7
-      }},
-      \"minecraft:destructible_by_explosion\": {{
-        \"explosion_resistance\": 6
-      }},
-      \"minecraft:geometry\": {{
-        \"identifier\": \"geometry.slab\",
-        \"bone_visibility\": {{
-          \"bottom_slab\": \"q.block_state('minecraft:vertical_half') == 'bottom'\",
-          \"top_slab\": \"q.block_state('minecraft:vertical_half') == 'top'\"
-        }}
-      }},
-      \"minecraft:material_instances\": {{
-        \"*\": {{
-          \"texture\": \"{}\"
-        }}
-      }},
-      \"minecraft:display_name\": \"{}\"
-    }},
-    \"events\": {{
-      \"{}:form_double\": {{
-        \"set_block_state\": {{
-          \"{}:double\": true
-        }},
-        \"run_command\": {{
-          \"command\": \"playsound use.stone @a ~~~ 1 0.8\"
-        }},
-        \"decrement_stack\": {{}}
-      }},
-      \"{}:destroy_double\": {{
-        \"spawn_loot\": {{}} // Spawns the block's default loot
-      }}
-    }}
-                            }}
-                        }}",
-                            format!(
-                                "{}:{}",
-                                id,
-                                file.path()
-                                    .file_stem()
-                                    .unwrap()
-                                    .to_str()
-                                    .unwrap()
-                                    .to_lowercase()
-                            ),
-                            id,
-                            id,
-                            id,
-                            format!(
-                                "{}:{}",
-                                id,
-                                file.path()
-                                    .file_stem()
-                                    .unwrap()
-                                    .to_str()
-                                    .unwrap()
-                                    .to_lowercase()
-                            ),
-                            id,
-                            id,
-                            format!(
-                                "{}:{}",
-                                id,
-                                file.path()
-                                    .file_stem()
-                                    .unwrap()
-                                    .to_str()
-                                    .unwrap()
-                                    .to_lowercase()
-                            ),
-                            id,
-                            id,
-                            file.path()
-                                    .file_stem()
-                                    .unwrap()
-                                    .to_str()
-                                    .unwrap()
-                                    .to_lowercase(),
-                                    name,
-                            id,
-                            id,
-                            id,
-                        ),
+                                .as_str(),
+                        }
+                        .render()
+                        .unwrap(),
                     ) {
                         Ok(_) => "OK",
                         Err(_) => "ERR",
@@ -541,36 +452,19 @@ fn workflow(id: String, name: String, path: PathBuf) {
                                 .unwrap()
                                 .to_lowercase()
                         ),
-                        format!(
-                            "{{
-                            \"format_version\": \"1.20.0\",
-                            \"minecraft:block\": {{
-                                \"description\": {{
-                                    \"identifier\": \"{}\",
-                                    \"menu_category\": {{
-                                        \"category\": \"construction\"
-                                    }}
-                                }},
-                                \"components\": {{
-                                    \"minecraft:destructible_by_mining\": {{
-                                        \"seconds_to_destroy\": 3
-                                    }},
-                                    \"minecraft:display_name\": \"{}\"
-                                }}
-                            }}
-                        }}",
-                            format!(
-                                "{}:{}",
-                                id,
-                                file.path()
-                                    .file_stem()
-                                    .unwrap()
-                                    .to_str()
-                                    .unwrap()
-                                    .to_lowercase()
-                            ),
-                            name
-                        ),
+                        BlockDefTemplate {
+                            pack_id: &id,
+                            block_id: &file
+                                .path()
+                                .file_stem()
+                                .unwrap()
+                                .to_str()
+                                .unwrap()
+                                .to_lowercase(),
+                            display_name: &name,
+                        }
+                        .render()
+                        .unwrap(),
                     ) {
                         Ok(_) => "OK",
                         Err(_) => "ERR",

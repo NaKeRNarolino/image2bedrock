@@ -1,5 +1,5 @@
 {
-  "format_version": "1.20.30",
+  "format_version": "1.20.80",
   "minecraft:block": {
     "description": {
       "identifier": "{{pack_id}}:{{block_id}}",
@@ -134,33 +134,9 @@
           "render_method": "alpha_test"
         }
       },
-      "minecraft:on_interact": {
-        "event": "{{pack_id}}:toggle"
-      },
-      "minecraft:display_name": "{{display_name}}"
-    },
-    "events": {
-      "{{pack_id}}:toggle": {
-        "sequence": [
-          {
-            "set_block_state": {
-              "{{pack_id}}:open": "!q.block_state('{{pack_id}}:open')"
-            }
-          },
-          {
-            "condition": "q.block_state('{{pack_id}}:open')",
-            "run_command": {
-              "command": "playsound close.wooden_trapdoor @a ~~~ 0.9 0.9"
-            }
-          },
-          {
-            "condition": "!q.block_state('{{pack_id}}:open')",
-            "run_command": {
-              "command": "playsound open.wooden_trapdoor @a ~~~ 0.9 0.9"
-            }
-          }
-        ]
-      }
+      "minecraft:display_name": "{{display_name}}",
+      "minecraft:custom_components": ["{{ pack_id }}:toggleable"],
+      "tag:chipped:toggle.{{ pack_id }}:open": {}
     }
   }
 }

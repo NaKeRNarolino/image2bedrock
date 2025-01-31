@@ -11,6 +11,11 @@
       "minecraft:destructible_by_mining": {
         "seconds_to_destroy": 3
       },
+      "minecraft:material_instances": {
+        "*": {
+          "render_method": "blend"
+        }
+      },
       "minecraft:display_name": "{{display_name}}"
     }
   }
